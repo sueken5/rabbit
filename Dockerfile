@@ -5,6 +5,7 @@ RUN rustup override add nightly
 RUN rustup component add rust-src
 RUN cargo install cargo-xbuild
 RUN cargo install bootimage
+RUN cargo install xargo
 
 RUN mkdir -p /rabbit
 
