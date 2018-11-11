@@ -1,6 +1,6 @@
 #![no_std]
 #![no_main]
-#![feature(panic_implementation)]
+#![feature(panic_handler)]
 #![feature(global_asm)]
 #![feature(asm)]
 

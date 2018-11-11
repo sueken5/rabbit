@@ -1,7 +1,15 @@
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn it_works() {
-        assert_eq!(2 + 2, 4);
-    }
+#![no_std]
+#![feature(panic_handler)]
+
+use core::panic::PanicInfo;
+
+#[no_mangle]
+pub extern "C" fn i386_init() {
+    loop {}
+}
+
+#[panic_handler]
+#[no_mangle]
+pub extern "C" fn panic(_info: &PanicInfo) -> ! {
+    loop {}
 }
