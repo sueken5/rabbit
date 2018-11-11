@@ -10,41 +10,12 @@ The one-time initialization of statics with non-const functions is a common prob
 
 # めも
 
-```
-// #![cfg_attr(test, allow(dead_code, unused_macros, unused_imports))]
-//
-// //![no_std]をつけると標準ライブラリが一切つかえなくなる
-// #![no_std]
-// //#![no_main]をつけるとRustのランタイムであるcr0を使わなくなる
-// #![no_main]
-//
-// #[cfg(test)]
-// extern crate std;
-//
-// use core::panic::PanicInfo;
-// extern crate bootloader_precompiled;
-// extern crate volatile;
-// extern crate spin;
-//
-// #[macro_use]
-// extern crate lazy_static;
-//
-// #[macro_use]
-// mod vga_buffer;
-//
-// // The linker just looks for a function with that name and sets this function as entry point the executable.
-// #[cfg(not(test))]
-// #[no_mangle]
-// pub extern "C" fn _start() -> ! {
-//     println!("Hello World{}", "!");
-//     loop {}
-// }
-//
-// /// This function is called on panic.
-// #[cfg(not(test))] // only compile when the test flag is not set. The #[cfg(…)] attribute ensures that the annotated item is only included if the passed condition is met.
-// #[panic_handler]
-// fn panic(info: &PanicInfo) -> ! {
-//     println!("{}", info);
-//     loop {}
-// }
-```
+# build
+
+kernel以下をビルド、オブジェクトファイルにしてからブートローダーのオブジェクトファイルと接続させる。
+
+# xargo
+
+`objcopy -O binary -S target/x86_64-bootloader/release/bootloader bootimage.bin`
+
+`qemu-system-x86_64 -hda bootimage.bin -d int -s`

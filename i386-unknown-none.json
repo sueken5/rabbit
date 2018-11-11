@@ -8,9 +8,10 @@
   "arch": "x86",
   "cpu": "pentium4",
   "os": "none",
-  "linker-flavor": "ld",
+  "linker-flavor": "ld.lld",
+  "linker": "rust-lld",
   "pre-link-args": {
-    "ld": [
+    "ld.lld": [
       "--script=linker.ld"
     ]
   },

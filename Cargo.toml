@@ -5,3 +5,11 @@ authors = ["sueken5"]
 
 [dependencies]
 # inc = { path = "inc" }
+
+[profile.dev]
+panic = "abort"
+
+[profile.release]
+panic = "abort"
+lto = false
+debug = true
