@@ -4,7 +4,8 @@ version = "0.1.0"
 authors = ["sueken5"]
 
 [dependencies]
-# inc = { path = "inc" }
+inc = { path = "inc" }
+hwio = { path = "hwio" }
 
 [profile.dev]
 panic = "abort"
