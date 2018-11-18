@@ -6,7 +6,7 @@
 use core::panic::PanicInfo;
 extern crate inc;
 
-extern "C" {
+pub extern "C" {
     use inc::mmu::{PGSHIFT};
     use inc::memlayout::{KERNBASE, KSTKSIZE};
 }
@@ -14,7 +14,7 @@ extern "C" {
 global_asm!(include_str!("entry.S"));
 
 #[no_mangle]
-extern "C" fn kmain() {
+pub extern "C" fn kmain() {
     let vga_buffer = 0xb8000 as *mut u8;
 
     for (i, &byte) in b"Entry Kernel!".iter().enumerate() {
