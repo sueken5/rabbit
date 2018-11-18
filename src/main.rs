@@ -30,7 +30,28 @@ pub extern "C" fn bootmain() -> ! {
 
     read_segment(elf_header as u32, KB4, 0);
 
-    loop {}
+    // is this a valid ELF?
+	if elf_header.magic != elf::ELF_MAGIC {
+        for (i, &byte) in b"invalid elf magic".iter().enumerate() {
+            unsafe {
+                *vga_buffer.offset(i as isize * 2) = byte;
+                *vga_buffer.offset(i as isize * 2 + 1) = 0xb;
+            }
+        }
+        return;
+    }
+
+    let ph = ((elf_header as *const u8) + elf_header.program_header_table_offset) as *const elf::ProgramHeader;
+	let end_ph = (ph as u32) + elf_header.program_header_num;
+
+    while ph < eph {
+		readseg(ph.paddr, ph.memsize, ph.offset);
+    }
+
+	// call the entry point from the ELF header
+	// note: does not return!
+    let entry: extern "C" fn() -> ! = core::mem::transmute((*elf_header).entry);
+    entry();
 }
 
 #[inline(never)]
