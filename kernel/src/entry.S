@@ -68,7 +68,7 @@ relocated:
 	# Set the stack pointer
 	movl	$(bootstacktop),%esp
 
-	# now to kernel code
+	# now to kenel code
 	call	kmain
 
 	# Should never get here, but in case we do, just spin.
