@@ -1,0 +1,16 @@
+[[package]]
+name = "bootloader"
+version = "0.1.0"
+dependencies = [
+ "hwio 0.1.0",
+ "inc 0.1.0",
+]
+
+[[package]]
+name = "hwio"
+version = "0.1.0"
+
+[[package]]
+name = "inc"
+version = "0.1.0"
+

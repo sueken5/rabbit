@@ -1,5 +1,5 @@
-#![no_std]
 #![no_main]
+#![no_std]
 #![feature(global_asm)]
 #![feature(asm)]
 
@@ -13,17 +13,15 @@ use hwio::disk;
 global_asm!(include_str!("boot.S"));
 
 const SECTOR_SIZE: u32 = 512;
-const KB4 = SECTOR_SIZE * 8
+const KB4: u32 = SECTOR_SIZE * 8;
 
 #[no_mangle]
-pub extern "C" fn bootmain() -> ! {
+pub unsafe extern "C" fn bootmain() {
     let vga_buffer = 0xb8000 as *mut u8;
 
     for (i, &byte) in b"Entry BootLoader!".iter().enumerate() {
-        unsafe {
-            *vga_buffer.offset(i as isize * 2) = byte;
-            *vga_buffer.offset(i as isize * 2 + 1) = 0xb;
-        }
+        *vga_buffer.offset(i as isize * 2) = byte;
+        *vga_buffer.offset(i as isize * 2 + 1) = 0xb;
     }
 
     let elf_header = 0x10000 as *const elf::ELFHeader;
@@ -31,21 +29,20 @@ pub extern "C" fn bootmain() -> ! {
     read_segment(elf_header as u32, KB4, 0);
 
     // is this a valid ELF?
-	if elf_header.magic != elf::ELF_MAGIC {
+	if (*elf_header).magic != elf::ELF_MAGIC {
         for (i, &byte) in b"invalid elf magic".iter().enumerate() {
-            unsafe {
-                *vga_buffer.offset(i as isize * 2) = byte;
-                *vga_buffer.offset(i as isize * 2 + 1) = 0xb;
-            }
+            *vga_buffer.offset(i as isize * 2) = byte;
+            *vga_buffer.offset(i as isize * 2 + 1) = 0xb;
         }
         return;
     }
 
-    let ph = ((elf_header as *const u8) + elf_header.program_header_table_offset) as *const elf::ProgramHeader;
-	let end_ph = (ph as u32) + elf_header.program_header_num;
+    let mut ph = ((elf_header as *const u8).offset((*elf_header).program_header_table_offset as isize)) as *const elf::ProgramHeader;
+    let end_ph = ph.offset((*elf_header).program_header_num as isize);
 
-    while ph < eph {
-		readseg(ph.paddr, ph.memsize, ph.offset);
+    while ph < end_ph {
+		read_segment((*ph).paddr, (*ph).memsize, (*ph).p_offset);
+        ph = ((ph as u32) + 32) as *const elf::ProgramHeader;
     }
 
 	// call the entry point from the ELF header
@@ -61,12 +58,12 @@ fn read_segment(pa: u32, count: u32, offset: u32) {
     let mut bpa = pa & !(SECTOR_SIZE - 1);
 
     // translate from bytes to sectors, and kernel starts at sector 1
-    let sector_offset = (offset / SECTOR_SIZE) + 1;
+    let mut sector_offset = (offset / SECTOR_SIZE) + 1;
 
     // If this is too slow, we could read lots of sectors at a time.
 	// We'd write more to memory than asked, but it doesn't matter --
 	// we load in increasing order.
-    while bpa < epa {
+    while bpa < end_pa {
        // Since we haven't enabled paging yet and we're using
        // an identity segment mapping (see boot.S), we can
        // use physical addresses directly.  This won't be the
@@ -78,23 +75,27 @@ fn read_segment(pa: u32, count: u32, offset: u32) {
 }
 
 fn wait_disk() {
-    // wait for disk ready
-    while (x86::inb(disk::CMD) & 0xC0) != 0x40 {};
+    unsafe {
+        // wait for disk ready
+        while (x86::inb(disk::CMD) & 0xC0) != 0x40 {};
+    }
 }
 
 fn read_sector(dst: u32, offset: u32) {
-    // wait for disk to be ready
-    wait_disk();
-    x86::outb(disk::SECTOR_COUNT, 1); // count = 1
-    x86::outb(disk::LOGICAL_BLOCK_ADDRESS_LOW_BYTE, offset as u8);
-    x86::outb(disk::LOGICAL_BLOCK_ADDRESS_MID_BYTE, (offset >> 8) as u8);
-    x86::outb(disk::LOGICAL_BLOCK_ADDRESS_HIGH_BYTE, (offset >> 16) as u8);
-    x86::outb(disk::LOGICAL_BLOCK_ADDRESS_LAST_BYTE, ((offset >> 24) | 0xE0) as u8);
-    x86::outb(disk::CMD, disk::READ_SECTOR);
-    // wait for disk to be ready
-    wait_disk();
-    // read a sector
-    x86::insl(disk::DATA_PORT, dst, SECTOR_SIZE / 4);
+    unsafe {
+        // wait for disk to be ready
+        wait_disk();
+        x86::outb(disk::SECTOR_COUNT, 1); // count = 1
+        x86::outb(disk::LOGICAL_BLOCK_ADDRESS_LOW_BYTE, offset as u8);
+        x86::outb(disk::LOGICAL_BLOCK_ADDRESS_MID_BYTE, (offset >> 8) as u8);
+        x86::outb(disk::LOGICAL_BLOCK_ADDRESS_HIGH_BYTE, (offset >> 16) as u8);
+        x86::outb(disk::LOGICAL_BLOCK_ADDRESS_LAST_BYTE, ((offset >> 24) | 0xE0) as u8);
+        x86::outb(disk::CMD, disk::READ_SECTOR);
+        // wait for disk to be ready
+        wait_disk();
+        // read a sector
+        x86::insl(disk::DATA_PORT, dst, SECTOR_SIZE / 4);
+    }
 }
 
 

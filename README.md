@@ -20,6 +20,20 @@ kernel以下をビルド、オブジェクトファイルにしてからブー�
 
 `qemu-system-x86_64 -hda bootimage.bin -d int -s`
 
+# build dd
+
+```
+# How to build the kernel disk image
+$(OBJDIR)/kern/kernel.img: $(OBJDIR)/kern/kernel $(OBJDIR)/boot/boot
+	@echo + mk $@
+	$(V)dd if=/dev/zero of=$(OBJDIR)/kern/kernel.img~ count=10000 2>/dev/null
+	$(V)dd if=$(OBJDIR)/boot/boot of=$(OBJDIR)/kern/kernel.img~ conv=notrunc 2>/dev/null
+	$(V)dd if=$(OBJDIR)/kern/kernel of=$(OBJDIR)/kern/kernel.img~ seek=1 conv=notrunc 2>/dev/null
+	$(V)mv $(OBJDIR)/kern/kernel.img~ $(OBJDIR)/kern/kernel.img
+```
+
+`seed=1`が鍵、これのおかげで512からになるので読み込みが可能
+
 # 資料
 - http://qa.elecom.co.jp/faq_detail.html?id=5439
 - https://ceunican.github.io/aos/36.IO_Devices.pdf

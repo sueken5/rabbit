@@ -1,9 +1,9 @@
-pub const ELF_MAGIC: u32 = 0x464C457FU; /* "\x7FELF" in little endian */
+pub const ELF_MAGIC: u32 = 0x464C457F; /* "\x7FELF" in little endian */
 
 #[repr(C)]
 pub struct ProgramHeader {
-	pub type: u32,
-	pub offset: u32,
+	pub p_type: u32,
+	pub p_offset: u32,
 	pub vaddr: u32,
 	pub paddr: u32,
 	pub filesize: u32,
@@ -15,8 +15,8 @@ pub struct ProgramHeader {
 #[repr(C)]
 pub struct ELFHeader {
 	pub magic: u32,// must equal ELF_MAGIC
-	pub elf: [u8, 12],
-	pub type: u16,
+	pub elf: [u8; 12],
+	pub e_type: u16,
 	pub machine: u16,
 	pub version: u32,
 	pub entry: u32,
@@ -29,4 +29,4 @@ pub struct ELFHeader {
 	pub section_header_entry_size: u16,
 	pub section_header_num: u16,
 	pub section_header_string_index: u16,
-};
+}
