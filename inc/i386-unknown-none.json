@@ -6,9 +6,9 @@
   "max-atomic-width": "64",
   "data-layout": "e-m:e-i32:32-f32:32-n8:16:32-S128-p:32:32:32",
   "arch": "x86",
+  "cpu": "pentium4",
   "os": "none",
   "linker-flavor": "ld.lld",
-  "linker": "rust-lld",
   "pre-link-args": {
     "ld.lld": [
       "--script=linker.ld"
