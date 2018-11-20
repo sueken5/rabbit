@@ -4,7 +4,7 @@ CARGO_FLAG := --release
 
 .PHONY: build
 build:
-	# cd bootloader && xargo build --target $(RUSTC_TERGET) $(CARGO_FLAG)
+	cd bootloader && xargo build --target $(RUSTC_TERGET) $(CARGO_FLAG)
 	cd kernel && xargo build --target $(RUSTC_TERGET) $(CARGO_FLAG)
 	mkdir -p bin/obj
 	objcopy -O binary bootloader/target/i386-unknown-none/release/bootloader bin/obj/bootloader
