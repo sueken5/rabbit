@@ -1,3 +1,4 @@
+#![no_main]
 #![no_std]
 #![feature(global_asm)]
 #![feature(asm)]

@@ -1,9 +1,9 @@
-BUILD_FRAVER := release
-RUSTC_TERGET := i386-unknown-none
-CARGO_FLAG :=
-ifeq ($(BUILD_FRAVER),release)
-	CARGO_FLAG += --release
-endif
+#
+# Makefile fragment for the JOS kernel.
+# This is NOT a complete makefile;
+# you must run GNU make in the top-level directory
+# where the GNUmakefile is located.
+#
 
-target/$(RUSTC_TERGET)/$(BUILD_FRAVER)/kernel: src/*.rs src/*.S $(RUSTC_TERGET).json
-	xargo build --target $(RUSTC_TERGET) $(CARGO_FLAG)
+kernel/target/$(RUSTC_TERGET)/$(BUILD_FRAVER)/kernel: kernel/src/*.rs kernel/src/*.S kernel/$(RUSTC_TERGET).json
+	cd kernel; xargo build --target $(RUSTC_TERGET) $(CARGO_FLAG)

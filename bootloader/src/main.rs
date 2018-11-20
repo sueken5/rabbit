@@ -1,4 +1,6 @@
+#![no_main]
 #![no_std]
+#![feature(lang_items)]
 #![feature(global_asm)]
 #![feature(asm)]
 
@@ -101,5 +103,11 @@ fn read_sector(dst: u32, offset: u32) {
 #[panic_handler]
 #[no_mangle]
 pub extern "C" fn panic(_info: &PanicInfo) -> ! {
+    loop {}
+}
+
+#[lang = "eh_personality"]
+#[no_mangle]
+pub extern "C" fn eh_personality() {
     loop {}
 }

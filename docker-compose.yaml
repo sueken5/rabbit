@@ -1,16 +1,14 @@
 version: '3.7'
 
 services:
-  emichan:
+  rabbit:
     build: ./
     image: sueken5/rabbit
     tty: true
     stdin_open: true
     privileged: true
     security_opt:
-      - CARGO_BUILD_TARGET_DIR=/tmp/target
       - seccomp:unconfined
     working_dir: /rabbit
     volumes:
       - ./:/rabbit:cached
-      - /tmp/rabbit/target:/tmp/target:cached
