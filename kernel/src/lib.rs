@@ -1,15 +1,20 @@
 #![no_std]
-#![no_main]
 #![feature(global_asm)]
 #![feature(asm)]
 
 use core::panic::PanicInfo;
 extern crate inc;
 
-pub extern "C" {
-    use inc::mmu::{PGSHIFT};
-    use inc::memlayout::{KERNBASE, KSTKSIZE};
-}
+// #[link(name = "readline")]
+// extern "C" {
+//     static mut PGSHIFT: u32;
+//     static mut KERNBASE: u32;
+//     static mut KSTKSIZE: u32;
+// }
+//
+// PGSHIFT = inc::mmu::PGSHIFT;
+// KERNBASE = inc::memlayout::KERNBASE;
+// KSTKSIZE = inc::memlayout::KSTKSIZE;
 
 global_asm!(include_str!("entry.S"));
 
@@ -24,6 +29,10 @@ pub extern "C" fn kmain() {
         }
     }
     loop{}
+}
+
+pub extern "C" fn reloc (x: u32) -> u32 {
+    return x - inc::memlayout::KERNBASE
 }
 
 #[panic_handler]

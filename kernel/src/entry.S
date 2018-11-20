@@ -29,7 +29,7 @@
 # virtual memory when the bootloader enters this code, we need the
 # bootloader to jump to the *physical* address of the entry point.
 .globl		_start
-_start = RELOC(entry)
+_start = (entry - 0xF0000000)
 
 .globl entry
 entry:
@@ -46,12 +46,12 @@ entry:
 
 	# Load the physical address of entry_pgdir into cr3.  entry_pgdir
 	# is defined in entrypgdir.c.
-	movl	$(RELOC(entry_pgdir)), %eax
-	movl	%eax, %cr3
-	# Turn on paging.
-	movl	%cr0, %eax
-	orl	$(CR0_PE|CR0_PG|CR0_WP), %eax
-	movl	%eax, %cr0
+	# movl	$(RELOC(entry_pgdir)), %eax
+	# movl	%eax, %cr3
+	# # Turn on paging.
+	# movl	%cr0, %eax
+	# orl	$(CR0_PE|CR0_PG|CR0_WP), %eax
+	# movl	%eax, %cr0
 
 	# Now paging is enabled, but we're still running at a low EIP
 	# (why is this okay?).  Jump up above KERNBASE before entering
@@ -79,9 +79,9 @@ spin:	jmp	spin
 ###################################################################
 # boot stack
 ###################################################################
-	.p2align	PGSHIFT		# force page alignment
+	.p2align	12		# force page alignment
 	.globl		bootstack
 bootstack:
-	.space		KSTKSIZE
+	.space		96
 	.globl		bootstacktop
 bootstacktop:

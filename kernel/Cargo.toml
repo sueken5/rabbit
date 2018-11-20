@@ -4,3 +4,4 @@ version = "0.1.0"
 authors = ["sueken5"]
 
 [dependencies]
+inc = { path = "../inc" }
