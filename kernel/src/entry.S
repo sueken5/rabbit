@@ -9,9 +9,9 @@
 
 #define	RELOC(x) ((x) - KERNBASE)
 
-#define MULTIBOOT_HEADER_MAGIC (0x1BADB002)
-#define MULTIBOOT_HEADER_FLAGS (0)
-#define CHECKSUM (-(MULTIBOOT_HEADER_MAGIC + MULTIBOOT_HEADER_FLAGS))
+#define 0x1BADB002 (0x1BADB002)
+#define 0 (0)
+#define CHECKSUM (-(0x1BADB002 + 0))
 
 ###################################################################
 # entry point
@@ -21,9 +21,9 @@
 
 # The Multiboot header
 .align 4
-.long MULTIBOOT_HEADER_MAGIC
-.long MULTIBOOT_HEADER_FLAGS
-.long CHECKSUM
+.long 0x1BADB002
+.long 0
+.long -0x1BADB002
 
 # '_start' specifies the ELF entry point.  Since we haven't set up
 # virtual memory when the bootloader enters this code, we need the

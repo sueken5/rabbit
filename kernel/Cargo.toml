@@ -2,6 +2,15 @@
 name = "kernel"
 version = "0.1.0"
 authors = ["sueken5"]
+edition = "2018"
 
 [dependencies]
 inc = { path = "../inc" }
+
+[profile.dev]
+panic = "abort"
+
+[profile.release]
+panic = "abort"
+lto = false
+debug = true

@@ -1,10 +1,11 @@
 #![no_main]
 #![no_std]
+#![feature(lang_items)]
 #![feature(global_asm)]
 #![feature(asm)]
 
 use core::panic::PanicInfo;
-extern crate inc;
+// extern crate inc;
 
 // #[link(name = "readline")]
 // extern "C" {
@@ -32,12 +33,14 @@ pub extern "C" fn kmain() {
     loop{}
 }
 
-pub extern "C" fn reloc (x: u32) -> u32 {
-    return x - inc::memlayout::KERNBASE
-}
-
 #[panic_handler]
 #[no_mangle]
 pub extern "C" fn panic(_info: &PanicInfo) -> ! {
+    loop {}
+}
+
+#[lang = "eh_personality"]
+#[no_mangle]
+pub extern "C" fn eh_personality() {
     loop {}
 }

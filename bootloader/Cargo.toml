@@ -2,6 +2,7 @@
 name = "bootloader"
 version = "0.1.0"
 authors = ["sueken5"]
+edition = "2018"
 
 [dependencies]
 inc = { path = "../inc" }
